@@ -185,6 +185,62 @@ main {
   cursor: not-allowed;
 }
 
+/* ── Mobile ─────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  body { min-height: 100svh; }
+
+  header { padding: 0.625rem 1rem; }
+
+  main {
+    /* column-reverse: controls (first in DOM) go below,
+       preview (second in DOM) goes above — good for shared links */
+    flex-direction: column-reverse;
+    min-height: auto;
+  }
+
+  .controls {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-top: 1px solid #ddd;
+    overflow-y: visible;
+    padding: 1rem;
+    /* 2-column grid: Font+Weight sit side by side, rest full-width */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  /* Text, Size, Align, Line height span both columns */
+  .controls label:nth-child(1),
+  .controls label:nth-child(4),
+  .controls label:nth-child(5),
+  .controls label:nth-child(6) {
+    grid-column: 1 / -1;
+  }
+
+  .preview-area {
+    padding: 1rem;
+    justify-content: flex-start;
+  }
+
+  #svg-container { max-width: 100%; }
+
+  .action-row {
+    width: 100%;
+    max-width: none;
+  }
+
+  .action-row button {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  #share-panel { max-width: none; }
+}
+
 /* ── Share panel ─────────────────────────────────── */
 
 #share-panel {
