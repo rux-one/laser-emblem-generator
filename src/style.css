@@ -147,10 +147,14 @@ main {
   display: none;
 }
 
-#download-btn {
-  padding: 0.7rem 2rem;
-  background: #111;
-  color: #fff;
+.action-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+#download-btn,
+#share-btn {
+  padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 7px;
   font-size: 0.95rem;
@@ -160,11 +164,76 @@ main {
   letter-spacing: 0.01em;
 }
 
-#download-btn:hover:not(:disabled) {
-  background: #333;
+#download-btn {
+  background: #111;
+  color: #fff;
 }
 
-#download-btn:disabled {
+#download-btn:hover:not(:disabled) { background: #333; }
+
+#share-btn {
+  background: #fff;
+  color: #111;
+  border: 1.5px solid #ccc;
+}
+
+#share-btn:hover:not(:disabled) { border-color: #888; background: #f5f5f5; }
+
+#download-btn:disabled,
+#share-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+/* ── Share panel ─────────────────────────────────── */
+
+#share-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+#share-panel.hidden { display: none; }
+
+#share-url {
+  flex: 1;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #333;
+  background: #fafafa;
+  min-width: 0;
+  font-family: ui-monospace, monospace;
+}
+
+#copy-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+#copy-btn svg { width: 1rem; height: 1rem; }
+
+#copy-btn .icon-check { display: none; }
+#copy-btn.copied .icon-copy { display: none; }
+#copy-btn.copied .icon-check { display: block; }
+
+#copy-btn:hover { border-color: #888; color: #111; }
+
+#copy-btn.copied {
+  border-color: #3a9e5a;
+  color: #3a9e5a;
+  background: #f0faf4;
 }

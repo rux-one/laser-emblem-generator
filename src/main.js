@@ -1,6 +1,7 @@
 import { FONTS, loadOpentypeFont } from './fonts.js'
 import { createPreviewSVG, renderPreview } from './preview.js'
 import { generateSVG } from './export.js'
+import { encodeState, decodeState } from './state-codec.js'
 
 const state = {
   text: 'EMBLEM',
@@ -25,7 +26,7 @@ function populateFontSelect() {
   })
 }
 
-function populateWeightSelect() {
+function populateWeightSelect(preserveIndex = false) {
   const sel = document.getElementById('weight-select')
   sel.innerHTML = ''
   currentFontDef().weights.forEach((w, i) => {
@@ -34,19 +35,35 @@ function populateWeightSelect() {
     opt.textContent = w.label
     sel.appendChild(opt)
   })
-  state.weightIndex = 0
+  if (!preserveIndex) state.weightIndex = 0
+  sel.value = state.weightIndex
+}
+
+// Sync all form controls to current state (used when loading from URL hash)
+function syncControlsToState() {
+  document.getElementById('text-input').value = state.text
+  document.getElementById('font-select').value = state.fontIndex
+  populateWeightSelect(true)
+  document.getElementById('size-input').value = state.fontSize
+  document.getElementById('size-output').value = state.fontSize
+  document.getElementById('align-select').value = state.align
+  document.getElementById('lh-input').value = state.lineHeight
+  document.getElementById('lh-output').value = state.lineHeight
 }
 
 let svg
 
 async function loadFontAndUpdate() {
-  const btn = document.getElementById('download-btn')
-  btn.disabled = true
+  const downloadBtn = document.getElementById('download-btn')
+  const shareBtn = document.getElementById('share-btn')
+  downloadBtn.disabled = true
+  shareBtn.disabled = true
   try {
     state.font = await loadOpentypeFont(currentWeight().url)
     update()
   } finally {
-    btn.disabled = false
+    downloadBtn.disabled = false
+    shareBtn.disabled = false
   }
 }
 
@@ -70,6 +87,24 @@ function update() {
 
   populateFontSelect()
   populateWeightSelect()
+
+  // Restore state from URL hash if present
+  const hash = location.hash.slice(1)
+  if (hash) {
+    const saved = decodeState(hash)
+    if (saved) {
+      state.text        = saved.text
+      state.fontIndex   = Math.min(saved.fontIndex, FONTS.length - 1)
+      state.fontSize    = saved.fontSize
+      state.align       = saved.align
+      state.lineHeight  = saved.lineHeight
+      // Clamp weightIndex to available weights for the font
+      state.weightIndex = Math.min(saved.weightIndex, currentFontDef().weights.length - 1)
+      syncControlsToState()
+    }
+  }
+
+  // ── Controls ──────────────────────────────────────────────
 
   document.getElementById('text-input').addEventListener('input', e => {
     state.text = e.target.value
@@ -104,6 +139,8 @@ function update() {
     update()
   })
 
+  // ── Download ──────────────────────────────────────────────
+
   document.getElementById('download-btn').addEventListener('click', async () => {
     const btn = document.getElementById('download-btn')
     btn.disabled = true
@@ -126,6 +163,32 @@ function update() {
       btn.disabled = false
       btn.textContent = 'Download SVG'
     }
+  })
+
+  // ── Share ─────────────────────────────────────────────────
+
+  document.getElementById('share-btn').addEventListener('click', () => {
+    const encoded = encodeState(state)
+    history.replaceState(null, '', '#' + encoded)
+
+    const panel = document.getElementById('share-panel')
+    const input = document.getElementById('share-url')
+    input.value = location.href
+    panel.classList.remove('hidden')
+    input.select()
+  })
+
+  document.getElementById('copy-btn').addEventListener('click', async () => {
+    const input = document.getElementById('share-url')
+    try {
+      await navigator.clipboard.writeText(input.value)
+    } catch {
+      input.select()
+      document.execCommand('copy')
+    }
+    const btn = document.getElementById('copy-btn')
+    btn.classList.add('copied')
+    setTimeout(() => btn.classList.remove('copied'), 1500)
   })
 
   await loadFontAndUpdate()
