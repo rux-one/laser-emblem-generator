@@ -75,6 +75,11 @@ function update() {
     fontWeight: currentWeight().value,
   })
   document.getElementById('overflow-warning').classList.toggle('hidden', !overflows)
+
+  const encoded = encodeState(state)
+  history.replaceState(null, '', '#' + encoded)
+  const urlInput = document.getElementById('share-url')
+  if (urlInput) urlInput.value = location.href
 }
 
 ;(async function init() {
@@ -168,13 +173,9 @@ function update() {
   // ── Share ─────────────────────────────────────────────────
 
   document.getElementById('share-btn').addEventListener('click', () => {
-    const encoded = encodeState(state)
-    history.replaceState(null, '', '#' + encoded)
-
     const panel = document.getElementById('share-panel')
-    const input = document.getElementById('share-url')
-    input.value = location.href
     panel.classList.remove('hidden')
+    const input = document.getElementById('share-url')
     input.select()
   })
 
