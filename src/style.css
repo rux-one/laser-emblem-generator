@@ -111,6 +111,7 @@ main {
   justify-content: center;
   gap: 1.25rem;
   padding: 2rem;
+  background: url('../assets/bg.jpg') center / cover;
 }
 
 #svg-container {
@@ -118,10 +119,7 @@ main {
   max-width: 480px;
   /* Maintain the exact hex SVG aspect ratio */
   aspect-ratio: 94.510216 / 83.673889;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;

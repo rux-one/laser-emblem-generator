@@ -1,5 +1,9 @@
-import { HEX_PATH, SVG_WIDTH, SVG_HEIGHT, SVG_VIEWBOX, TEXT_AREA } from './hex.js'
+import { HEX_PATH, HEX_CX, HEX_CY, SVG_WIDTH, SVG_HEIGHT, SVG_VIEWBOX, TEXT_AREA, COLOR_SHAPE, COLOR_TEXT } from './hex.js'
 import { computeLines, computeLinePositions, lineX } from './layout.js'
+
+const INSET_SCALE = 0.91
+const INSET_TRANSFORM =
+  `translate(${HEX_CX},${HEX_CY}) scale(${INSET_SCALE}) translate(${-HEX_CX},${-HEX_CY})`
 
 export function generateSVG(font, state) {
   const { text, fontFamily, fontWeight, fontSize, align, lineHeight } = state
@@ -29,7 +33,9 @@ export function generateSVG(font, state) {
      viewBox="${SVG_VIEWBOX}"
      width="${SVG_WIDTH}mm"
      height="${SVG_HEIGHT}mm">
-  <path d="${HEX_PATH}" fill="none" stroke="#000000" stroke-width="0.4"/>
-  <path d="${textD}" fill="#1a1a1a"/>
+  <path d="${HEX_PATH}" fill="${COLOR_SHAPE}" stroke="none"/>
+  <path d="${HEX_PATH}" fill="none" stroke="${COLOR_TEXT}" stroke-width="0.5"
+        transform="${INSET_TRANSFORM}"/>
+  <path d="${textD}" fill="${COLOR_TEXT}"/>
 </svg>`
 }

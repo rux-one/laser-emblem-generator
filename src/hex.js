@@ -20,6 +20,10 @@ export const HEX_PATH =
 export const HEX_CX = 47.247
 export const HEX_CY = 41.832
 
+// Design colors
+export const COLOR_SHAPE = '#c9a87c'   // light brown — hex fill
+export const COLOR_TEXT  = '#3a1f0a'   // dark brown  — engraved text
+
 // Safe inscribed text area (centered rectangle with comfortable margin from hex edges)
 export const TEXT_AREA = {
   cx: 47.247,

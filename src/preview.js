@@ -1,19 +1,33 @@
-import { HEX_PATH, SVG_VIEWBOX } from './hex.js'
+import { HEX_PATH, HEX_CX, HEX_CY, SVG_VIEWBOX, COLOR_SHAPE, COLOR_TEXT } from './hex.js'
 import { computeLines, computeLinePositions, lineX, isOverflowing } from './layout.js'
 
 const NS = 'http://www.w3.org/2000/svg'
+
+// Scale hex path around its center to produce an inset decorative outline
+const INSET_SCALE = 0.91
+const INSET_TRANSFORM =
+  `translate(${HEX_CX},${HEX_CY}) scale(${INSET_SCALE}) translate(${-HEX_CX},${-HEX_CY})`
 
 export function createPreviewSVG() {
   const svg = document.createElementNS(NS, 'svg')
   svg.setAttribute('viewBox', SVG_VIEWBOX)
   svg.style.cssText = 'width:100%;height:100%;display:block;'
 
-  const hexPath = document.createElementNS(NS, 'path')
-  hexPath.setAttribute('d', HEX_PATH)
-  hexPath.setAttribute('fill', 'none')
-  hexPath.setAttribute('stroke', '#111')
-  hexPath.setAttribute('stroke-width', '0.4')
-  svg.appendChild(hexPath)
+  // Hex fill
+  const hexFill = document.createElementNS(NS, 'path')
+  hexFill.setAttribute('d', HEX_PATH)
+  hexFill.setAttribute('fill', COLOR_SHAPE)
+  hexFill.setAttribute('stroke', 'none')
+  svg.appendChild(hexFill)
+
+  // Inset outline
+  const inset = document.createElementNS(NS, 'path')
+  inset.setAttribute('d', HEX_PATH)
+  inset.setAttribute('fill', 'none')
+  inset.setAttribute('stroke', COLOR_TEXT)
+  inset.setAttribute('stroke-width', '0.5')
+  inset.setAttribute('transform', INSET_TRANSFORM)
+  svg.appendChild(inset)
 
   const textGroup = document.createElementNS(NS, 'g')
   textGroup.id = 'preview-text'
@@ -41,7 +55,7 @@ export function renderPreview(svg, state) {
     el.setAttribute('font-family', `'${fontFamily}', sans-serif`)
     el.setAttribute('font-weight', fontWeight)
     el.setAttribute('font-size', fontSize)
-    el.setAttribute('fill', '#1a1a1a')
+    el.setAttribute('fill', COLOR_TEXT)
     el.textContent = lines[i]
     group.appendChild(el)
   }
